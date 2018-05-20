@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  #content
+    #category
+      | Posted in 
+      a(href='/categories/example') Example
+      article
+        #article-title
+          h1 Article Title
+        #post-meta Posted by Seth Griffin on 05/19/2018
+        
+        section Content here
+          div#top(title='Return to top of page')
+            span#up
+              a(href='#topAnchor') ^

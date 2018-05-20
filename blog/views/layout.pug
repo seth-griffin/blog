@@ -2,6 +2,16 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    include ./includes/styles    
   body
+    a#topAnchor
+    
+    include ./includes/header
+
     block content
+
+    include ./includes/leftsidebar
+
+    block footer
+
+    include ./includes/scripts
