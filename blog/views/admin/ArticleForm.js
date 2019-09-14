@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 export default class ArticleForm extends Component {
   constructor(props) {
     super(props);
+
     this.state = { 
       title: '',
       published: false, 
@@ -14,7 +15,18 @@ export default class ArticleForm extends Component {
       updatedOn: ''
     };
 
+    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    const target = event.target;
+
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+    this.state[name] = value;
+    this.setState(this.state); 
   }
 
   handleSubmit(e) {
@@ -26,10 +38,6 @@ export default class ArticleForm extends Component {
     let author = this.state.author.trim();
     let postedOn = this.state.postedOn;
     let updatedOn = this.state.updatedOn;
-    
-    if(!title || !body) {
-      return;
-    }
   
     this.props.onArticleSubmit( {
       title: title,
@@ -60,23 +68,31 @@ export default class ArticleForm extends Component {
                 <div className="form-group">
                     <label for="title">Title</label>
                     <input type="text" className="form-control"
-                     id="title"
-                     aria-describedby="Title"
-                     placeholder="Title"/>
+                      id="title"
+                      name="title"                     
+                      aria-describedby="Title"
+                      placeholder="Title"
+                      onChange={ this.handleChange } />
                 </div>
 
                 <div className="form-group">
-                    <label for="published">Title</label>
-                    <input type="checkbox" className="form-control"
-                     id="published"
-                     aria-describedby="Published"
-                     placeholder="Title"/>
+                    <label for="published">Publish</label>
+                    <input type="checkbox" 
+                      className="form-control"
+                      id="published"
+                      name="published"
+                      aria-describedby="Published"
+                      placeholder="Published"
+                      onChange= { this.handleChange } />
                 </div>
 
                 <div className="form-group">
-                    <label for="category">Priority</label>
-                    <select className="form-control" 
-                    id="category">
+                    <label for="category">Category</label>
+                    <select 
+                      className="form-control" 
+                      id="category"
+                      name="category"
+                      onChange={ this.handleChange }>
                         <option>PHP</option>
                         <option>NodeJS</option>
                         <option>Business Management</option>
@@ -84,9 +100,14 @@ export default class ArticleForm extends Component {
                 </div>
 
                 <div className="form-group">
-                    <label for="body">Body</label>
-                    <input type="text" className="form-control" 
-                     id="body" placeholder="Body Text..."/>
+                    <label for="body">Article</label>
+                    <textarea type="text" 
+                      className="form-control" 
+                      id="body" 
+                      name="body" 
+                      placeholder="Body Text..."
+                      onChange={ this.handleChange }>
+                      </textarea>
                 </div>
 
                 <button type="submit" className="btn btn-primary">Add</button>

@@ -23,8 +23,8 @@ module.exports = {
                   loader: 'babel-loader',
                   query: { 
                     presets: [
-                      'react', 
-                      'es2015'
+                      '@babel/preset-env',
+                      '@babel/preset-react'
                     ] 
                   }
                 }

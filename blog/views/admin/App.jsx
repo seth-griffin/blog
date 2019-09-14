@@ -10,6 +10,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = { data: [] };
+        this.apiUrl = '/api/v1';
         this.loadArticlesFromServer = this.loadArticleFromServer.bind(this);
         this.handleArticleSubmit = this.handleArticleSubmit.bind(this);
         this.handleArticleDelete = this.handleArticleDelete.bind(this);
@@ -25,10 +26,9 @@ class App extends Component {
 
     handleArticleSubmit(article) {
         let articles = this.state.data;
-        article.id = Date.now();
         let newArticles = articles.concat([article]);
         this.setState({ data: newArticles });
-        axios.post(this.props.url+'/article/'+article.id, article)
+        axios.post(`${this.apiUrl}/article`, article)
             .catch(err => {
                 console.error(err);
                 this.setState({ data: article });
@@ -36,7 +36,7 @@ class App extends Component {
     }
 
     handleArticleDelete(id) {
-        axios.delete(`${this.props.url}/${id}`)
+        axios.delete(`${this.apiUrl}/article/${id}`)
             .then(res => {
                 console.log('Article deleted');
             })
@@ -47,7 +47,7 @@ class App extends Component {
 
     handleArticleUpdate(id, article) {
         //sends the comment id and new author/text to our api
-        axios.put(`${this.props.url}/${id}`, article)
+        axios.put(`${this.apiUrl}/${id}`, article)
             .catch(err => {
                 console.log(err);
             })
@@ -75,6 +75,7 @@ class App extends Component {
               onArticleUpdate={ this.handleArticleUpdate }
 
               data={ this.state.data }/>
+
           <ArticleForm onArticleSubmit={ this.handleArticleSubmit }/>
 
 
