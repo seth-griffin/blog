@@ -1,26 +1,20 @@
 import React, { Component } from 'react';
 
 
-export default class ArticleList extends Component {
+export default class CategoryList extends Component {
     render() {
-        let articleNodes = this.props.data.map(article => {
+        let catgoryNodes = this.props.data.map(category => {
             return (
               <tr>
                 <td> 
-                  { article.title }
+                  { category.title }
                 </td>
                 <td>
-                  { article.category }
-                </td>
-                <td>
-                  { article.published ? "Yes" : "No" }
+                  { category.description }
                 </td>
                 <td>
                   <button type="submit" className="btn btn-primary">
                     Edit
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    { article.published ? "Unpublish" : "Publish"}
                   </button>
                 </td>
               </tr>
@@ -29,17 +23,17 @@ export default class ArticleList extends Component {
 
         return (
             <div className="panel panel-success">
-                <h1> Articles </h1>
+                <h1> Categories </h1>
                 <table>
                   <thead>
                     <tr>
-                      <th>Title</th><th>Category</th><th>Published</th><th>Actions</th>
+                      <th>Title</th><th>Description</th>
                     </tr>
                   </thead>
                   <tbody>
-                    { articleNodes }
+                    { categoryNodes }
                   </tbody>
-                </table>                
+                </table>
             </div>
         )
     }

@@ -9,29 +9,41 @@ class App extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { data: [] };
         this.apiUrl = '/api/v1';
-        this.loadArticlesFromServer = this.loadArticleFromServer.bind(this);
+
+        this.state = { 
+            articles: [], 
+            categories: [] 
+        };
+
+        this.loadArticlesFromServer = this.loadArticlesFromServer.bind(this);
+        this.loadCategoriesFromServer = this.loadCategoriesFromServer.bind(this);
         this.handleArticleSubmit = this.handleArticleSubmit.bind(this);
         this.handleArticleDelete = this.handleArticleDelete.bind(this);
         this.handleArticleUpdate = this.handleArticleUpdate.bind(this);
     }
 
-    loadArticleFromServer() {
-        axios.get(this.props.url)
+    loadArticlesFromServer() {
+        axios.get(`${this.apiUrl}/article/all`)
             .then(res => {
-                this.setState({ data: res.data });
+                this.setState({ articles: res.data })
+            })
+    }
+
+    loadCategoriesFromServer() {
+        axios.get(`${this.apiUrl}/category/all`)
+            .then(res => {
+                this.setState({ categories: res.data })
             })
     }
 
     handleArticleSubmit(article) {
-        let articles = this.state.data;
+        let articles = this.state.articles;
         let newArticles = articles.concat([article]);
-        this.setState({ data: newArticles });
+        this.setState( { articles: newArticles });
         axios.post(`${this.apiUrl}/article`, article)
             .catch(err => {
                 console.error(err);
-                this.setState({ data: article });
             });
     }
 
@@ -55,7 +67,9 @@ class App extends Component {
 
     componentDidMount() {
         this.loadArticlesFromServer();
+        this.loadCategoriesFromServer();
         setInterval(this.loadArticlesFromServer, this.props.pollInterval);
+        setInterval(this.loadCategoriesFromServer, this.props.pollInterval);
     }
 
 
@@ -74,9 +88,9 @@ class App extends Component {
 
               onArticleUpdate={ this.handleArticleUpdate }
 
-              data={ this.state.data }/>
+              data={ this.state.articles } />
 
-          <ArticleForm onArticleSubmit={ this.handleArticleSubmit }/>
+          <ArticleForm onArticleSubmit={ this.handleArticleSubmit } categories={ this.state.categories } />
 
 
       </div>

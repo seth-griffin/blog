@@ -61,6 +61,7 @@ export default class ArticleForm extends Component {
   }
 
   render() {
+    var categories = this.props.categories.map((category) => <option>{category.name}</option>);
     return (
        <div>
             <h1>Add new Article</h1>
@@ -93,10 +94,8 @@ export default class ArticleForm extends Component {
                       id="category"
                       name="category"
                       onChange={ this.handleChange }>
-                        <option>PHP</option>
-                        <option>NodeJS</option>
-                        <option>Business Management</option>
-                    </select>
+                        { categories }
+                   </select>                  
                 </div>
 
                 <div className="form-group">
