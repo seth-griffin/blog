@@ -1,0 +1,3 @@
+flask run --port 5001
+
+--next - create landing page with flask template
