@@ -1,13 +1,20 @@
+from flask import Blueprint
 import click
-from flask import current_app
 
-def init_db():
+db_cli = Blueprint("db", __name__)
+
+@db_cli.cli.group("db")
+def db_group():
+    """Database management commands."""
+    pass
+
+@db_cli.cli.command("init")
+def init():
+    """ Initialize Database """
     db = get_db()
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
-@app.cli.command('init-db')
-def init_db_command():
     init_db()
     click.echo('Initialized the database')
 
