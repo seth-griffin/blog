@@ -15,8 +15,6 @@ def create_app():
     """ Import app dependents """
     from .blueprints.blog import routes
     from .blueprints.db import db_cli    
-#from .blueprints.blog.routes import blog
-    #from .blueprints.db import db_cli
     
     app.register_blueprint(db_cli.db)
     app.register_blueprint(routes.blog)
