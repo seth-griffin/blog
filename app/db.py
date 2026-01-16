@@ -1,30 +1,37 @@
-from flask import Blueprint
 import click
+from flask import current_app, Blueprint
+from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
+from .model import Base
 
 db_cli = Blueprint("db", __name__)
+
+@db_cli.cli.command("init")
+def db_init_command():
+    """ Initialize database  """
+    db_init()
+    click.echo("Initialized the database")
 
 @db_cli.cli.group("db")
 def db_group():
     """Database management commands."""
     pass
 
-@db_cli.cli.command("init")
-def init():
+def db_init():
     """ Initialize Database """
-    db = get_db()
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
+    app = current_app
+    db_urn = app.config.get('DB_URN')
+    db_user = app.config.get('DB_USER')
+    db_pass = app.config.get('DB_PASS')
+    db_ip = app.config.get('DB_IP')
+    db_name = app.config.get('DB_NAME')
 
-    init_db()
-    click.echo('Initialized the database')
+    engine = db_create_engine(db_urn, db_user, db_pass, db_ip, db_name)
+    Base.metadata.create_all(engine)
 
-def init_app(app):
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
+def db_create_engine(urn, db_user, db_pass, db_ip, db_name):
+    engine = create_engine(urn.format(db_user, db_pass, db_ip, db_name))
 
-def create_app():
-    app = Flask(__name__)
-    from . import db
-    db.init_app(app)
+    if not database_exists(engine.url): create_database(engine.url)   
 
-    return app
+    return engine 

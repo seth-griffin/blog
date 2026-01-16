@@ -1,8 +1,8 @@
 
 Quick Start
 =====================
+flask db init
 flask run --port 5001
-
 
 Next:
 ====================

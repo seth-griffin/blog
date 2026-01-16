@@ -8,28 +8,21 @@ app = Flask(__name__,
             template_folder='web/templates',
             )
 
-""" Register db commands """
-
-from . import db
-app.register_blueprint(db.db_cli)
-
 """ Load settings """
 
 app.config.from_pyfile('settings.py')
 
-from app import routes
-from sqlalchemy import create_engine
-from sqlalchemy_utils import database_exists, create_database
+""" Database module creation"""
+from . import routes
+from . import db
+from .db import db_create_engine 
 
-""" Map database parameters from config settings  """
+app.register_blueprint(db.db_cli)
 
+db_urn = app.config.get('DB_URN')
 db_user = app.config.get('DB_USER')
 db_pass = app.config.get('DB_PASS')
 db_ip = app.config.get('DB_IP')
 db_name = app.config.get('DB_NAME')
 
-# TODO: Remove / relocate to db init once functioning
-
-engine = create_engine('mysql+mysqlconnector://{}:{}@{}/{}/'.format(db_user, db_pass, db_ip, db_name))
-
-if not database_exists(engine.url): create_database(engine.url)
+engine = db_create_engine(db_urn, db_user, db_pass, db_ip, db_name)
