@@ -3,16 +3,16 @@ from flask import current_app as app, Blueprint
 from .models import Base
 from .util import db_create_engine
 
-db_cli = Blueprint("db", __name__)
+db = Blueprint("db", __name__)
 
-@db_cli.cli.command("init")
+@db.cli.command("init")
 def db_init_command():
     """Initialize database"""
     db_init()
     click.echo("Initialized the database")
 
 
-@db_cli.cli.group("db")
+@db.cli.group("db")
 def db_group():
     """Database management commands."""
     pass

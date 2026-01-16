@@ -13,20 +13,12 @@ def create_app():
     app.config.from_object("config.Config")
 
     """ Import app dependents """
-    from .blueprints.routes import routes
-    from .blueprints.routes.routes import blog
-    from .blueprints.db import db
-    from .blueprints.db.db import db_create_engine
+    from .blueprints.blog import routes
+    from .blueprints.db import db_cli    
+#from .blueprints.blog.routes import blog
+    #from .blueprints.db import db_cli
     
-    app.register_blueprint(db.db_cli)
-    app.register_blueprint(blog)
-
-    #engine = db_create_engine(
-    #    app.config.get("DB_URN"),
-    #    app.config.get("DB_USER"),
-    #    app.config.get("DB_PASS"),
-    #    app.config.get("DB_IP"),
-    #    app.config.get("DB_NAME")
-    #)
+    app.register_blueprint(db_cli.db)
+    app.register_blueprint(routes.blog)
     
     return app
