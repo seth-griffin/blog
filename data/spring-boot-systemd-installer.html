@@ -1,0 +1,212 @@
+<categories>bash,sysadmin,devops,systemd,units,java,springboot</categories>
+<posted_on>2023-02-13</posted_on>
+<content>
+  <main class="page-content" aria-label="Content">
+    <div class="wrapper">
+      <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+        <header class="post-header">
+          <h1 class="post-title p-name" itemprop="name headline">Spring Boot Systemd Installer</h1>
+          <p class="post-meta">
+            <time class="dt-published" datetime="2023-02-13T14:00:00+00:00" itemprop="datePublished">Feb 13, 2023</time>
+          </p>
+        </header>
+
+        <div class="post-content e-content" itemprop="articleBody">
+          <h1 id="problem-description">Problem Description</h1>
+          <p>Every now and then I run into a weird or odd requirement that just needs to be worked on or that I find interesting enough to work on in spite of it not really being in the vein of best or common practices.</p>
+          <p>This project on my github is <a href="https://github.com/seth-griffin/spring_boot_systemd_installer">one of those</a></p>
+          <p>I had a basic web host that I needed to run a backend API on top of that was simple enough to not warrant having a separate host or docker host configured. This API was just to collect contact-us information into a mysql database from clients filling out a simple form.</p>
+          <p>I decided that I wanted to run this simple spring boot application as a systemd service for ease of management but I didn’t have a clean way to deploy the compiled API to the server and manage it in a mainstream linux-y way. What an annoying problem to have.</p>
+          <p>I reasoned that using a shell script would make deploying and updating the API on the server simpler and would fit the need for this to work on only one flavor / variety of linux.</p>
+
+          <h1 id="solution-goals">Solution Goals</h1>
+          <ul>
+            <li>I wanted the script to run on a Ubuntu based host where a jar file has already been successfully copied</li>
+            <li>The script must deploy a spring boot binary to a Ubuntu based webhost</li>
+            <li>Needs to be easy for the end user to utilize</li>
+          </ul>
+
+          <h1 id="ux-requirements">UX Requirements</h1>
+          <ul>
+            <li>The script must be dead simple to use with the following general user interface</li>
+          </ul>
+
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">./springboot-systemd-installer.sh \
+    my-service-name \
+    "My Service Desription" \
+    my-app-name.jar \
+    my_env_file \
+    syslog</code></pre>
+          </figure>
+
+          <ul>
+            <li>
+              <p>This will be accomplished by mapping 5 positional arguments to global variables used by the script as follows</p>
+            </li>
+            <li>$1 = Service Name – In the form of my-service-name – The name of the service to be used as a systemd service</li>
+            <li>$2 = Service Description – In the form of “My service description” – The service description to be displayed in the description field output of a systemd unit listing</li>
+            <li>$3 = Jar File Name – In the form of my-app-name-.jar – the name of the jar file containing the app</li>
+            <li>$4 = Environment file name – In the form of my_env_file – the name of the environment file to be written to /etc containing mapped app properties to be read on startup</li>
+            <li>syslog</li>
+            <li>$5 = syslog opts – One of syslog or no syslog. If syslog then send logs to syslog otherwise if nosyslog only use systemd journal</li>
+          </ul>
+
+          <h1 id="solution-runtime-requirements">Solution Runtime Requirements</h1>
+          <ul>
+            <li>
+              <p>Upon execution the script must perform the following actions:</p>
+            </li>
+            <li>Map the end users positional arguments to global variables used by the script</li>
+            <li>Confirm with the end user that we’re going to make the right changes</li>
+            <li>Create a service account / user + group for the service to run as with no shell</li>
+            <li>Copy and modify a unit file template to suit the parameters passed in to /lib/systemd/system/my-service-name.service</li>
+            <li>Write the environment file to /etc so that your environment mapped app properties are read by the service on start up</li>
+            <li>Modify the syslog configuration thus enabling imptcp on port 514 and generate the syslog config file for the deployed service</li>
+            <li>Install the jar file at /opt/my-service-name/my-app-name.jar and change the permissions so that the service user can execute it</li>
+            <li>Reload the systemd daemon</li>
+            <li>Enable the new service</li>
+            <li>
+              <p>Start the service</p>
+            </li>
+            <li>The successful execution of the script must empower the end user to manage the script as a service as follows:</li>
+          </ul>
+
+          <p>Enable the service for use with</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">systemctl enable service-name.service</code></pre>
+          </figure>
+
+          <p>Start the service with</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">systemctl start service-name.service</code></pre>
+          </figure>
+
+          <p>Check the status of the service with</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">systemctl status service-name.service</code></pre>
+          </figure>
+
+          <p>Show the logs for the service with</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">journalctl -f -u - service-name.service</code></pre>
+          </figure>
+
+          <h1 id="writing-the-script--putting-it-all-together">Writing the script / Putting it all together</h1>
+          <p>The ultimate goal of this script is to produce a unit file and then get all the constituent pieces in the right place. The unit file is how systemd knows it has a service registered.</p>
+
+          <figure class="highlight">
+            <pre><code class="language-ini" data-lang="ini">[Unit]
+Description=
+After=syslog.target
+
+[Service]
+User=
+Group=
+SuccessExitStatus=143
+EnvironmentFile=/etc//
+ExecStart=/opt//
+#StandardOutput=syslog
+#StandardError=syslog
+#SyslogIdentifier=
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+          </figure>
+
+          <h1 id="the-action-part">The action part</h1>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">if [[ -z "$1" && -z "$2" && -z "$3" && -z "$4" && -z "$5" ]]
+    then
+        echo -e "Not enough arguments supplied\nUsage:\n\t${0} service-name service-description jar-file-name environment-file-name syslog|nosyslog\n"
+        exit 1
+fi
+    
+service_name="${1}"
+service_description="${2}"
+jar_file_name="${3}"
+environment_file_name="${4}"
+use_syslog="${5}"
+
+echo "It looks like you entered the following arguments:"
+echo -e "  Service Name: ${service_name}"
+echo -e "  Service Description: ${service_description}"
+echo -e "  Jar File Name: ${jar_file_name}"
+echo -e "  Environment File: ${environment_file_name}"
+echo -e "  Use Syslog: ${use_syslog}"
+read -n1 -p "Is this correct [Y/N]?" user_choice
+
+case $user_choice in
+    y|Y) echo "Installing..." ;;
+    n|N) echo "Please correct your errors and try again" && exit ;;
+    *) echo "Invalid selection" && exit ;;
+esac</code></pre>
+          </figure>
+
+          <p>Next we check to see if the service user exists:</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">user_exists=$(id -u ${service_name})
+if [[ user_exists -eq 0 ]]
+    then
+         useradd ${service_name} -s /sbin/nologin -M
+fi</code></pre>
+          </figure>
+
+          <p>We’ll use SED to substitute the tokens in our template:</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">echo "Writing unit file from template to /lib/systemd/system/${service_name}.service"
+cp unit_file_template.service /lib/systemd/system/${service_name}.service
+sed -i "s||${service_name}|g" /lib/systemd/system/${service_name}.service
+sed -i "s||${service_description}|g" /lib/systemd/system/${service_name}.service
+sed -i "s||${jar_file_name}|g" /lib/systemd/system/${service_name}.service
+chown root:root /lib/systemd/system/${service_name}.service
+chmod 755 /lib/systemd/system/${service_name}.service</code></pre>
+          </figure>
+
+          <p>...and write the environment file:</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">mkdir -p /etc/${service_name}
+cp ${environment_file_name} /etc/${service_name}/${service_name}</code></pre>
+          </figure>
+
+          <p>Then write the syslog config for our new unit:</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">if [ $use_syslog = "syslog" ]
+    then            
+        echo "Syslog usage elected...setting up /var/log/${service_name}"
+        mkdir -p /var/log/${service_name}
+        chown syslog:${service_name} /var/log/${service_name}
+        chmod 755 /var/log/${service_name}
+        touch /var/log/${service_name}/${service_name}.log
+        chown syslog:${service_name} /var/log/${service_name}/${service_name}.log
+        chmod 755 /var/log/${service_name}/${service_name}.log    
+
+        sed -i "s|#module(load=\"imtcp\")|module(load=\"imtcp\")|g" /etc/rsyslog.conf
+        echo -e "if \$programname == '${service_name}' then /var/log/${service_name}/${service_name}.log & stop" > /etc/rsyslog.d/30-${service_name}.conf
+
+        systemctl restart rsyslog
+fi</code></pre>
+          </figure>
+
+          <p>Installing the jar file:</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">echo "Copying the jar file to /opt/${service_name}/${jar_file_name}"
+mkdir -p /opt/${service_name}
+cp ${jar_file_name} /opt/${service_name}/${jar_file_name}
+chmod g+x root:${service_name} /opt/${service_name}/${jar_file_name}</code></pre>
+          </figure>
+
+          <p>Finalize the installation:</p>
+          <figure class="highlight">
+            <pre><code class="language-bash" data-lang="bash">systemctl daemon-reload
+systemctl enable ${service_name}.service
+systemctl restart ${service_name}</code></pre>
+          </figure>
+
+          <p><a href="https://github.com/seth-griffin/spring_boot_systemd_installer">Repo Home Page</a></p>
+        </div>
+        <a class="u-url" href="/bash/sysadmin/devops/systemd/units/java/springboot/2023/02/13/spring-boot-systemd-installer.html" hidden></a>
+      </article>
+    </div>
+  </main>
+</content>

@@ -1,0 +1,133 @@
+<categories>programming, functional-programming, lisp, scheme, arc</categories>
+<posted_on>2025-12-11</posted_on>
+<title>Introduction to the Arc Programming Language | Seth Griffin</title>
+<content>
+<main class="page-content" aria-label="Content">
+  <div class="wrapper">
+    <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+      <header class="post-header">
+        <h1 class="post-title p-name" itemprop="name headline">Introduction to the Arc Programming Language</h1>
+        <p class="post-meta">
+          <time class="dt-published" datetime="2025-12-11T19:01:00+00:00" itemprop="datePublished">
+            Dec 11, 2025
+          </time>
+        </p>
+      </header>
+
+      <div class="post-content e-content" itemprop="articleBody">
+        <p>Arc is a LISP dialect built on top of Racket (formerly Scheme).</p>
+
+        <h2 id="quick-start">Quick start</h2>
+
+        <h3 id="installation">Installation</h3>
+        <figure class="highlight">
+          <pre><code class="language-bash">sudo apt install racket</code></pre>
+        </figure>
+
+        <p>Create a working directory for Racket and download Arc:</p>
+        <figure class="highlight">
+          <pre><code class="language-bash">wget www.arclanguage.org/arc3.2.tar .
+tar -xf arc3.2.tar</code></pre>
+        </figure>
+
+        <h3 id="run-the-interpreter">Run the command line interpreter</h3>
+        <figure class="highlight">
+          <pre><code class="language-bash">cd arc3.2
+racket -f as.scm</code></pre>
+        </figure>
+        <p>The language core library is contained in <code>arc.arc</code>.</p>
+
+        <h2 id="useful-commands">Useful commands</h2>
+        <figure class="highlight">
+          <pre><code class="language-bash">>(system "clear") ; clear the racket terminal
+>(quit)           ; exit the arc shell</code></pre>
+        </figure>
+
+        <h2 id="language-overview">Language Overview</h2>
+        <p>Comments are prefixed with a semi-colon:</p>
+        <figure class="highlight">
+          <pre><code class="language-bash">; This is a comment</code></pre>
+        </figure>
+
+        <h3 id="hello-world">Hello, World!</h3>
+        <p>The function <code>prn</code> stands for "print line":</p>
+        <figure class="highlight">
+          <pre><code class="language-bash">(prn "Hello, World!")</code></pre>
+        </figure>
+
+        <h3 id="arithmetic">Arithmetic</h3>
+        <p>
+          LISP uses prefix notation (operators come first). Evaluation is done from the inside out.
+        </p>
+        <figure class="highlight">
+          <pre><code class="language-bash">(+ 3 6 11)
+(* 3 6 (+ 3 11))</code></pre>
+        </figure>
+
+        <h3 id="function-definitions">Function definitions</h3>
+        <p>Defining a function <code>foo</code> that doubles an argument:</p>
+        <figure class="highlight">
+          <pre><code class="language-bash">(def foo (arg) (* arg 2))</code></pre>
+        </figure>
+
+        <h3 id="logic">Logic</h3>
+        <p>
+          Logic evaluates to true (<code>t</code>) or <code>nil</code> (false/null). 
+          The single quote <code>'</code> prevents evaluation.
+        </p>
+        <figure class="highlight">
+          <pre><code class="language-bash">(if (odd 1) 'a 'b) ; Returns 'a</code></pre>
+        </figure>
+
+        <h3 id="flow-control">Flow Control</h3>
+        <p>Basic <code>for</code> loop (1 to 10) and <code>each</code> iteration:</p>
+        <figure class="highlight">
+          <pre><code class="language-bash">(for i 1 10 (pr i " "))
+(each x '(a b c d e) (pr x " "))</code></pre>
+        </figure>
+
+        <h2 id="repetitive-operations">Repetitive Operations</h2>
+        <h3 id="map">Map</h3>
+        <p>Apply a function to successive elements of a list:</p>
+        <figure class="highlight">
+          <pre><code class="language-bash">(map [+ _ 10] '(1 2 3)) ; Returns (11 12 13)</code></pre>
+        </figure>
+
+        <h2 id="data-structures">Data Structures</h2>
+        <h3 id="hash-tables">Hash tables</h3>
+        <figure class="highlight">
+          <pre><code class="language-bash">(= airports (table))
+(= (airports "Boston") 'bos)</code></pre>
+        </figure>
+
+        <h3 id="stack">Stack</h3>
+        <p>Operate on lists using <code>push</code> and <code>pop</code>:</p>
+        <figure class="highlight">
+          <pre><code class="language-bash">(= x '(c a b))
+(pop x)   ; Returns 'c
+(push 'f x) ; x is now (f a b)</code></pre>
+        </figure>
+
+        <h2 id="macros">Macros</h2>
+        <p>
+          Macros generate code by expanding at runtime. Use <code>mac</code> instead of <code>def</code>.
+        </p>
+        <figure class="highlight">
+          <pre><code class="language-bash">(mac when (test . body)
+  `(if ,test (do ,@body)))</code></pre>
+        </figure>
+        <p>
+          The backtick <code>`</code> stops evaluation, while the comma <code>,</code> 
+          allows for partial evaluation within the template.
+        </p>
+
+        <h2 id="web-applications">Web applications</h2>
+        <p>A simple "Hello World" web operation:</p>
+        <figure class="highlight">
+          <pre><code class="language-bash">(defop hello req (pr "hello world"))</code></pre>
+        </figure>
+      </div>
+    </article>
+  </div>
+</main>
+</content>

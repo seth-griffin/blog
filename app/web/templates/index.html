@@ -1,286 +1,37 @@
 {% extends "layout.html" %}
 {% block title %}Test title{% endblock %}
 {% block content %}
-  <div class="wrapper"><a class="site-title" rel="author" href="https://seth-griffin.github.io/">Seth Griffin</a><nav class="site-nav">
-        <input type="checkbox" id="nav-trigger" class="nav-trigger">
-        <label for="nav-trigger">
-          <span class="menu-icon">
-            <svg viewBox="0 0 18 15" width="18px" height="15px">
-              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
-            </svg>
-          </span>
-        </label>
+  <div class="wrapper">
+    <div class="home">
+      <h2 class="post-list-heading">Posts</h2>
+      <ul class="post-list">
+        <li>
+          <span class="post-meta">Dec 11, 2025</span>
+          <h3>
+            <a class="post-link" href="/programming/functional-programming/lisp/scheme/arc/2025/12/11/introduction-arc-programming-language.html">
+              Introduction to the Arc Programming Language
+            </a>
+          </h3>
+        </li>
+        <li>
+          <span class="post-meta">Feb 13, 2023</span>
+          <h3>
+            <a class="post-link" href="/bash/sysadmin/devops/systemd/units/java/springboot/2023/02/13/spring-boot-systemd-installer.html">
+              Spring Boot Systemd Installer
+            </a>
+          </h3>
+        </li>
+        <li>
+          <span class="post-meta">Feb 10, 2023</span>
+          <h3>
+            <a class="post-link" href="/general/update/2023/02/10/welcome-to-my-github-site.html">
+              Welcome to my github site
+            </a>
+          </h3>
+        </li>
+      </ul>
 
-        <div class="trigger"><a class="page-link" href="https://seth-griffin.github.io/about/">About</a></div>
-      </nav></div>
-</header>
-<main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <article class="post h-entry" itemscope="" itemtype="http://schema.org/BlogPosting">
-
-  <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Spring Boot Systemd Installer</h1>
-    <p class="post-meta">
-      <time class="dt-published" datetime="2023-02-13T14:00:00+00:00" itemprop="datePublished">Feb 13, 2023
-      </time></p>
-  </header>
-
-  <div class="post-content e-content" itemprop="articleBody">
-    <h1 id="problem-description">Problem Description</h1>
-
-<p>Every now and then I run into a weird or odd requirement that just 
-needs to be worked on or that I find interesting enough to work on in 
-spite of it not really being in the vein of best or common practices.</p>
-
-<p>This project on my github is <a href="https://github.com/seth-griffin/spring_boot_systemd_installer">one of those</a></p>
-
-<p>I had a basic web host that I needed to run a backend API on top of 
-that was simple enough to not warrant having a separate host or docker 
-host configured. This API was just to collect contact-us information 
-into a mysql database from clients filling out a simple form.</p>
-
-<p>I decided that I wanted to run this simple spring boot application as
- a systemd service for ease of management but I didn’t have a clean way 
-to deploy the compiled API to the server and manage it in a mainstream 
-linux-y way. What an annoying problem to have.</p>
-
-<p>I reasoned that using a shell script would make deploying and 
-updating the API on the server simpler and would fit the need for this 
-to work on only one flavor / variety of linux.</p>
-
-<h1 id="solution-goals">Solution Goals</h1>
-
-<ul>
-  <li>I wanted the script to run on a Ubuntu based host where a jar file has already been successfully copied</li>
-  <li>The script must deploy a spring boot binary to a Ubuntu based webhost</li>
-  <li>Needs to be easy for the end user to utilize</li>
-</ul>
-
-<h1 id="ux-requirements">UX Requirements</h1>
-
-<ul>
-  <li>The script must be dead simple to use with the following general user interface</li>
-</ul>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">./springboot-systemd-installer.sh <span class="se">\</span>
-    my-service-name <span class="se">\</span>
-    <span class="s2">"My Service Desription"</span> <span class="se">\</span>
-    my-app-name.jar <span class="se">\</span>
-    my_env_file <span class="se">\</span>
-    syslog</code></pre></figure>
-
-<ul>
-  <li>
-    <p>This will be accomplished by mapping 5 positional arguments to global variables used by the script as follows</p>
-  </li>
-  <li>$1 = Service Name – In the form of my-service-name – The name of the service to be used as a systemd service</li>
-  <li>$2 = Service Description – In the form of “My service description”
- – The service description to be displayed in the description field 
-output of a systemd unit listing</li>
-  <li>$3 = Jar File Name – In the form of my-app-name-.jar – the name of the jar file containing the app</li>
-  <li>$4 = Environment file name – In the form of my_env_file – the name
- of the environment file to be written to /etc containing mapped app 
-properties to be read on startup</li>
-  <li>syslog</li>
-  <li>$5 = syslog opts – One of syslog or no syslog. If syslog then send logs to syslog otherwise if nosyslog only use systemd journal</li>
-</ul>
-
-<h1 id="solution-runtime-requirements">Solution Runtime Requirements</h1>
-
-<ul>
-  <li>
-    <p>Upon execution the script must perform the following actions:</p>
-  </li>
-  <li>Map the end users positional arguments to global variables used by the script</li>
-  <li>Confirm with the end user that we’re going to make the right changes</li>
-  <li>Create a service account / user + group for the service to run as with no shell</li>
-  <li>Copy and modify a unit file template to suit the parameters passed in to /lib/systemd/system/my-service-name.service</li>
-  <li>Write the environment file to /etc so that your environment mapped app properties are read by the service on start up</li>
-  <li>Modify the syslog configuration thus enabling imptcp on port 514 and generate the syslog config file for the deployed service</li>
-  <li>Install the jar file at /opt/my-service-name/my-app-name.jar and change the permissions so that the service user can execute it</li>
-  <li>Reload the systemd daemon</li>
-  <li>Enable the new service</li>
-  <li>
-    <p>Start the service</p>
-  </li>
-  <li>The successful execution of the script must empower the end user to manage the script as a service as follows:</li>
-</ul>
-
-<p>Enable the service for use with</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl <span class="nb">enable </span>service-name.service</code></pre></figure>
-
-<p>Start the service with</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl start service-name.service</code></pre></figure>
-
-<p>Check the status of the service with</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl status service-name.service</code></pre></figure>
-
-<p>Show the logs for the service with</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">journalctl <span class="nt">-f</span> <span class="nt">-u</span> - service-name.service</code></pre></figure>
-
-<p>For more about the above commands see the primary commands’ respective man pages.</p>
-
-<h1 id="writing-the-script--putting-it-all-together">Writing the script / Putting it all together</h1>
-
-<p>The ultimate goal of this script is to produce a unit file and then 
-get all the constituent pieces in the right place. The unit file is how 
-systemd knows it has a service registered. (for our purposes…unit files 
-can mean much more than that)</p>
-
-<p>The unit file template will be called unit_file_template.service and 
-will have the following form. I decided on double curly bracket tokens.</p>
-
-<figure class="highlight"><pre><code class="language-ini" data-lang="ini"><span class="nn">[Unit]</span>
-<span class="py">Description</span><span class="p">=</span>
-<span class="py">After</span><span class="p">=</span><span class="s">syslog.target</span>
-
-<span class="nn">[Service]</span>
-<span class="py">User</span><span class="p">=</span>
-<span class="py">Group</span><span class="p">=</span>
-<span class="py">SuccessExitStatus</span><span class="p">=</span><span class="s">143</span>
-<span class="py">EnvironmentFile</span><span class="p">=</span><span class="s">/etc//</span>
-<span class="py">ExecStart</span><span class="p">=</span><span class="s">/opt//</span>
-<span class="c">#StandardOutput=syslog
-#StandardError=syslog
-#SyslogIdentifier=
-</span>
-<span class="nn">[Install]</span>
-<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span></code></pre></figure>
-
-<h1 id="the-action-part">The action part</h1>
-
-<p>For our script first we want to get the positional variables and then verify with the user that we understand their intentions:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="k">if</span> <span class="o">[[</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span> <span class="o">&amp;&amp;</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$2</span><span class="s2">"</span> <span class="o">&amp;&amp;</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$3</span><span class="s2">"</span> <span class="o">&amp;&amp;</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$4</span><span class="s2">"</span> <span class="o">&amp;&amp;</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$5</span><span class="s2">"</span> <span class="o">]]</span>
-    <span class="k">then
-    	</span><span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"Not enough arguments supplied</span><span class="se">\n</span><span class="s2">Usage:</span><span class="se">\n\t</span><span class="k">${</span><span class="nv">0</span><span class="k">}</span><span class="s2"> service-name service-description jar-file-name environment-file-name syslog|nosyslog</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="nb">exit </span>1
-<span class="k">fi</span>
-    
-<span class="c">##</span>
-<span class="c"># Set up our environment variables</span>
-<span class="c">##</span>
-
-<span class="nv">service_name</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">1</span><span class="k">}</span><span class="s2">"</span>
-<span class="nv">service_description</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">2</span><span class="k">}</span><span class="s2">"</span>
-<span class="nv">jar_file_name</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">3</span><span class="k">}</span><span class="s2">"</span>
-<span class="nv">environment_file_name</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">4</span><span class="k">}</span><span class="s2">"</span>
-<span class="nv">use_syslog</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">5</span><span class="k">}</span><span class="s2">"</span>
-
-<span class="c">##</span>
-<span class="c"># Confirm with the end user that we're going to make the right changes</span>
-<span class="c">##</span>
-
-<span class="nb">echo</span> <span class="s2">"It looks like you entered the following arguments:"</span>
-<span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"  Service Name: </span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">"</span>
-<span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"  Service Description: </span><span class="k">${</span><span class="nv">service_description</span><span class="k">}</span><span class="s2">"</span>
-<span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"  Jar File Name: </span><span class="k">${</span><span class="nv">jar_file_name</span><span class="k">}</span><span class="s2">"</span>
-<span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"  Environment File: </span><span class="k">${</span><span class="nv">environment_file_name</span><span class="k">}</span><span class="s2">"</span>
-<span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"  Use Syslog: </span><span class="k">${</span><span class="nv">use_syslog</span><span class="k">}</span><span class="s2">"</span>
-<span class="nb">read</span> <span class="nt">-n1</span> <span class="nt">-p</span> <span class="s2">"Is this correct [Y/N]?"</span> user_choice
-
-<span class="nb">echo</span> <span class="s2">""</span>
-
-<span class="k">case</span> <span class="nv">$user_choice</span> <span class="k">in
-    </span>y|Y<span class="p">)</span> <span class="nb">echo</span> <span class="s2">"Installing..."</span> <span class="p">;;</span>
-    n|N<span class="p">)</span> <span class="nb">echo</span> <span class="s2">"Please correct your errors and try again"</span> <span class="o">&amp;&amp;</span> <span class="nb">exit</span> <span class="p">;;</span>
-    <span class="k">*</span><span class="p">)</span> <span class="nb">echo</span> <span class="s2">"Invalid selection"</span> <span class="o">&amp;&amp;</span> <span class="nb">exit</span> <span class="p">;;</span>
-<span class="k">esac</span></code></pre></figure>
-
-<p>Next we check to see if the service user that we will run the service as exists:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Create the user for the service if the user doesn't already exist</span>
-<span class="nv">user_exists</span><span class="o">=</span><span class="si">$(</span><span class="nb">id</span> <span class="nt">-u</span> <span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="si">)</span>
-<span class="k">if</span> <span class="o">[[</span> user_exists <span class="nt">-eq</span> 0 <span class="o">]]</span>
-    <span class="k">then
-         </span>useradd <span class="k">${</span><span class="nv">service_name</span><span class="k">}</span> <span class="nt">-s</span> /sbin/nologin <span class="nt">-M</span>
-<span class="k">fi</span></code></pre></figure>
-
-<p>Here’s the magic part. We’ll use SED to substitute the tokens in our template with the users inputs:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">echo</span> <span class="s2">"Writing unit file from template unit_file_template.service to /lib/systemd/system/</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">.service"</span>
-<span class="nb">cp </span>unit_file_template.service /lib/systemd/system/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service
-<span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s||</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">|g"</span> /lib/systemd/system/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service
-<span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s||</span><span class="k">${</span><span class="nv">service_description</span><span class="k">}</span><span class="s2">|g"</span> /lib/systemd/system/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service
-<span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s||</span><span class="k">${</span><span class="nv">jar_file_name</span><span class="k">}</span><span class="s2">|g"</span> /lib/systemd/system/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service
-<span class="nb">chown </span>root:root /lib/systemd/system/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service
-<span class="nb">chmod </span>755 /lib/systemd/system/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service</code></pre></figure>
-
-<p>…and publish the rendered template to /etc</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">##</span>
-<span class="c"># Write the environment file to /etc</span>
-<span class="c">##</span>
-<span class="nb">echo</span> <span class="s2">"Writing environment file to /etc/</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">/</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">"</span>
-<span class="nb">mkdir</span> <span class="nt">-p</span> /etc/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>
-<span class="nb">cp</span> <span class="k">${</span><span class="nv">environment_file_name</span><span class="k">}</span> /etc/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span></code></pre></figure>
-
-<p>Then write the syslog config for our new unit…</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">##</span>
-<span class="c"># Write the syslog config for the unit</span>
-<span class="c">##</span>
-<span class="k">if</span> <span class="o">[</span> <span class="nv">$use_syslog</span> <span class="o">=</span> <span class="s2">"syslog"</span> <span class="o">]</span>
-    <span class="k">then		    
-        </span><span class="nb">echo</span> <span class="s2">"Syslog usage was elected...setting up syslog space in /var/log/</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">"</span>
-	
-	    <span class="nb">mkdir</span> <span class="nt">-p</span> /var/log/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>
-    	<span class="nb">chown </span>syslog:<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span> /var/log/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>
-    	<span class="nb">chmod </span>755 /var/log/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>
-    	<span class="nb">touch</span> /var/log/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.log
-    	<span class="nb">chown </span>syslog:<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span> /var/log/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.log
-	    <span class="nb">chmod </span>755 /var/log/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.log    
-
-    	<span class="nb">echo</span> <span class="s2">"Configuring syslog"</span>
-        <span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s|#module(load=</span><span class="se">\"</span><span class="s2">imtcp</span><span class="se">\"</span><span class="s2">)|module(load=</span><span class="se">\"</span><span class="s2">imtcp</span><span class="se">\"</span><span class="s2">)|g"</span> /etc/rsyslog.conf
-        <span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s|input(type=</span><span class="se">\"</span><span class="s2">imtcp</span><span class="se">\"</span><span class="s2"> port=</span><span class="se">\"</span><span class="s2">514</span><span class="se">\"</span><span class="s2">)|input(type=</span><span class="se">\"</span><span class="s2">imtcp</span><span class="se">\ </span><span class="s2">port</span><span class="se">\"</span><span class="s2">514</span><span class="se">\"</span><span class="s2">)|g"</span> /etc/rsyslog.conf
-        <span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"if </span><span class="se">\$</span><span class="s2">programname == '</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">' or </span><span class="se">\$</span><span class="s2">syslogtag == '</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">' then /var/log/</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">/</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">.log &amp; stop"</span> <span class="o">&gt;</span> /etc/rsyslog.d/30-<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.conf
-
-        <span class="nb">echo</span> <span class="s2">"Reconfiguring systemd unit to use syslog"</span>
-        <span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s|#StandardOutput=syslog|StandardOutput=syslog|g"</span> /lib/systemd/system/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service
-        <span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s|#StandardError=syslog|StandardError=syslog|g"</span> /lib/systemd/system/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service
-        <span class="nb">sed</span> <span class="nt">-i</span> <span class="s2">"s|#SyslogIdentifier=</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">|SyslogIdentifier=</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">|g"</span> /lib/systemd/system/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service
-
-	    <span class="nb">echo</span> <span class="s2">"Reloading rsyslog"</span>
-        systemctl restart rsyslog
-<span class="k">fi</span></code></pre></figure>
-
-<p>Installing the jar file is a snap:</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">##</span>
-<span class="c"># Install the jar file </span>
-<span class="c">##</span>
-
-<span class="nb">echo</span> <span class="s2">"Copying the jar file </span><span class="k">${</span><span class="nv">jar_file_name</span><span class="k">}</span><span class="s2"> to /opt/</span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">/</span><span class="k">${</span><span class="nv">jar_file_name</span><span class="k">}</span><span class="s2">"</span>
-<span class="nb">mkdir</span> <span class="nt">-p</span> /opt/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>
-<span class="nb">cp</span> <span class="k">${</span><span class="nv">jar_file_name</span><span class="k">}</span> /opt/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>/<span class="k">${</span><span class="nv">jar_file_name</span><span class="k">}</span>
-<span class="nb">chown</span> <span class="nt">-R</span> /opt/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>/
-<span class="nb">chmod </span>g+x root:<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span> /opt/<span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>/<span class="k">${</span><span class="nv">jar_file_name</span><span class="k">}</span></code></pre></figure>
-
-<p>Reload the systemd daemon, enable the new unit and then restart the new unit.</p>
-
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">echo</span> <span class="s2">"Reloading systemd daemon"</span>
-systemctl daemon-reload
-
-<span class="nb">echo</span> <span class="s2">"Enabling systemd unit </span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">.service"</span>
-systemctl <span class="nb">enable</span> <span class="k">${</span><span class="nv">service_name</span><span class="k">}</span>.service
-
-<span class="nb">echo</span> <span class="s2">"Restarting systemd unit </span><span class="k">${</span><span class="nv">service_name</span><span class="k">}</span><span class="s2">"</span>
-systemctl restart <span class="k">${</span><span class="nv">service_name</span><span class="k">}</span></code></pre></figure>
-
-<p>For extra credit you could try adding verification that the unit is running properly at the end of your version of the script.</p>
-
-<p>See the script at the repo home page for the whole context:</p>
-
-<p><a href="https://github.com/seth-griffin/spring_boot_systemd_installer">Repo Home Page</a></p>
-
-  </div><a class="u-url" href="https://seth-griffin.github.io/bash/sysadmin/devops/systemd/units/java/springboot/2023/02/13/spring-boot-systemd-installer.html" hidden=""></a>
-</article>
-
-      </div>
-    </main>
+      <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
+    </div>
+  </div>
 {% endblock %}
