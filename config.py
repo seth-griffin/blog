@@ -1,7 +1,8 @@
-import os 
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
 
 class Config:
     DB_URN = os.environ.get("DB_URN")

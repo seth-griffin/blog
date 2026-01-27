@@ -20,6 +20,9 @@ class Post(Base):
     # posted_on DATE (Allows NULL by default in SQL, so we use Optional)
     posted_on: Mapped[Optional[date]] = mapped_column(Date)
 
+    # categories VARCHAR(128) NOT NULL
+    categories: Mapped[Optional[str]] = mapped_column(String(128), nullable=False)
+
     # content TEXT
     content: Mapped[Optional[str]] = mapped_column(Text)
 

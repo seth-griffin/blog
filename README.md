@@ -1,8 +1,11 @@
 
 Quick Start
 =====================
+source .venv/bin/activate
 flask db init
 flask run --port 5001
+black .
+
 
 Next:
 ====================

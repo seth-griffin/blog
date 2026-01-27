@@ -5,6 +5,7 @@ from .util import db_create_engine
 
 db = Blueprint("db", __name__)
 
+
 @db.cli.command("init")
 def db_init_command():
     """Initialize database"""
@@ -16,6 +17,7 @@ def db_init_command():
 def db_group():
     """Database management commands."""
     pass
+
 
 def db_init():
     """Initialize Database"""
