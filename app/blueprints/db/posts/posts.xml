@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<posts>
+    <post>
+        <id>1</id>
+        <categories>general,update</categories>
+        <title>Welcome to my github site</title>
+        <posted_on>2023-02-10</posted_on>
+        <content>welcome-to-my-github-site.html</content>
+        <url_path>null</url_path>
+    </post>
+    <post>
+        <id>2</id>
+        <categories>bash,sysadmin,devops,systemd,units,java,springboot</categories>
+        <title>Spring Boot System Installer</title>
+        <posted_on>2023-02-13</posted_on>
+        <content>spring-boot-systemd-installer.html</content>
+        <url_path>null</url_path>
+    </post>
+    <post>
+        <id>3</id>
+        <categories>programming,functional-programming,lisp,scheme,arc</categories>
+        <title>Introduction to the Arc Programming Language</title>
+        <posted_on>2025-12-11</posted_on>
+        <content>introduction-arc-programming-language.html</content>
+        <url_path>null</url_path>
+    </post>
+</posts>
