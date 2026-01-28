@@ -1,3 +1,6 @@
+Overview
+=====================
+A simple blogging application built with Python and Flask using MySQL as a backend
 
 Quick Start
 =====================
