@@ -4,6 +4,7 @@ from app.blueprints.db.models import Post
 
 blog = Blueprint("blog", __name__, template_folder="web/static/templates")
 
+
 @blog.route("/", methods=["GET"])
 @blog.route("/index")
 def index():
