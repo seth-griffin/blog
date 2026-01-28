@@ -31,3 +31,4 @@ wheels/
 .env
 .flaskenv
 .venv
+*.swp
