@@ -35,14 +35,25 @@
     }
     </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <link type="application/atom+xml" rel="alternate" href="https://seth-griffin.github.io/feed.xml" title="Seth Griffin">
-    <link rel="shortcut icon" type="image/x-icon" href="https://seth-griffin.github.io/bash/sysadmin/devops/systemd/units/java/springboot/2023/02/13/favicon.png">
+    <link type="application/atom+xml" rel="alternate" href="/feed.xml" title="Seth Griffin">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
 
 <body>
     <header class="site-header" role="banner">
-        </header>
+        <div class="wrapper"><a class="site-title" rel="author" href="/">Seth Griffin</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
 
+        <div class="trigger"><a class="page-link" href="/about">About</a></div>
+        </nav></div>
+    </header>
 
     <main class="page-content" aria-label="Content">
         {% block content %}{% endblock %}
@@ -63,13 +74,13 @@
                     <ul class="social-media-list">
                         <li>
                             <a href="https://github.com/seth-griffin">
-                                <svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> 
+                                <svg class="svg-icon"><use xlink:href="{{ url_for('static', filename='assets/minima-social-icons.svg') }}#github"></use></svg> 
                                 <span class="username">seth-griffin</span>
                             </a>
                         </li>
                         <li>
                             <a href="https://www.linkedin.com/in/seth-griffin-59920815b">
-                                <svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#linkedin"></use></svg> 
+                                <svg class="svg-icon"><use xlink:href="{{ url_for('static', filename='assets/minima-social-icons.svg') }}#linkedin"></use></svg> 
                                 <span class="username">seth-griffin-59920815b</span>
                             </a>
                         </li>
