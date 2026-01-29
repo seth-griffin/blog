@@ -1,6 +1,6 @@
 from flask import render_template
 from flask import Blueprint
-from app.blueprints.db.models import Post
+from app.blueprints.data.models import Post
 
 blog = Blueprint("blog", __name__, template_folder="web/static/templates")
 

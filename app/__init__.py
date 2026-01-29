@@ -1,8 +1,13 @@
 from flask import Flask
 from .extensions import db
+from dotenv import load_dotenv
+import os
 
 def create_app():
     """Create flask application"""
+    
+    load_dotenv()
+
     app = Flask(
         __name__,
         static_url_path="/web/",
@@ -11,10 +16,10 @@ def create_app():
     )
 
     uri = "mysql+pymysql://{}:{}@{}:3306/{}".format(
-        app.config.get("DB_USER"),
-        app.config.get("DB_PASS"),
-        app.config.get("DB_IP"),
-        app.config.get("DB_NAME")
+        os.getenv("DB_USER"),
+        os.getenv("DB_PASS"),
+        os.getenv("DB_IP"),
+        os.getenv("DB_NAME")
     )
 
     app.config["SQLALCHEMY_DATABASE_URI"] = uri 
@@ -24,16 +29,16 @@ def create_app():
     }
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    #db.init_app(db)
+    db.init_app(app)
 
     """ Load settings """
     app.config.from_object("config.Config")
 
     """ Import app dependents """
     from .blueprints.blog import routes
-    from .blueprints.db import db_cli
+    from .blueprints.data import data
 
-    app.register_blueprint(db_cli.db)
+    app.register_blueprint(data.data)
     app.register_blueprint(routes.blog)
 
     return app

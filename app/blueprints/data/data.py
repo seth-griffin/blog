@@ -5,28 +5,28 @@ from .models import Base
 from .util import db_create_engine
 from lxml import etree
 from .models import Post
+from ...extensions import db
 
-db = Blueprint("db", __name__)
+data = Blueprint("data", __name__)
 
-@db.cli.command("create-db")
-def db_init_command():
+@data.cli.command("create-db")
+def data_init_command():
     """Initialize database"""
-    db_init()
+    data_init()
     click.echo("Initialized the database")
 
-@db.cli.command("populate-posts")
-def db_populate_data_command():
+@data.cli.command("populate-posts")
+def data_populate_data_command():
     """Populate database with pre-defined posts"""
-    db_populate_posts()
+    data_populate_posts()
     click.echo("Posts populated")
 
 
-def db_populate_posts():
+def data_populate_posts():
     """Read post flat-files and import into data model"""
-    db = SQLAlchemy()
     parser = etree.XMLParser(recover=True)
     
-    posts_base_path = os.getcwd() + "/app/blueprints/db/posts/"
+    posts_base_path = os.getcwd() + "/app/blueprints/data/posts/"
     posts_xml_file_name = "posts.xml"
     posts_xml_data_file_path = posts_base_path + posts_xml_file_name
 
@@ -64,13 +64,13 @@ def db_populate_posts():
                 print(f"An error occurred: {e}") 
 
 
-@db.cli.group("db")
-def db_group():
+@data.cli.group("db")
+def data_group():
     """Database management commands."""
     pass
 
 
-def db_init():
+def data_init():
     """Initialize Database"""
     engine = db_create_engine(
         app.config.get("DB_URN"),
