@@ -5,7 +5,6 @@ import os
 
 def create_app():
     """Create flask application"""
-    
     load_dotenv()
 
     app = Flask(

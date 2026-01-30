@@ -15,14 +15,22 @@ def data_init_command():
     data_init()
     click.echo("Initialized the database")
 
-@data.cli.command("populate-posts")
+
+@data.cli.command("clean")
+def data_clean_command():
+    with app.app_context():
+        db.drop_all(bind='blog')
+    print("Database dropped and data deleted")
+    
+
+@data.cli.command("import-posts")
 def data_populate_data_command():
     """Populate database with pre-defined posts"""
-    data_populate_posts()
+    data_import_posts()
     click.echo("Posts populated")
 
 
-def data_populate_posts():
+def data_import_posts():
     """Read post flat-files and import into data model"""
     parser = etree.XMLParser(recover=True)
     
@@ -34,6 +42,7 @@ def data_populate_posts():
     root = tree.getroot()
 
     for element in root.iter():
+        
         save = False
         if element.tag == "post":
             post = Post()
@@ -46,13 +55,12 @@ def data_populate_posts():
         elif element.tag == "posted_on":
             post.posted_on = element.text
         elif element.tag == "content":
-            with open(posts_base_path + "/" + element.text, "r") as file:
+            with open(posts_base_path + element.text, "r") as file:
                 post.content = file.read()
-                post.content = element.text
         elif element.tag == "url_path":
-            post.content = None 
+            post.url_path = None 
             save = True
-        
+
         if save == True:
             db.session.add(post)
             print("Attemping to import post with id " + post.id + "and title " + post.title)
@@ -62,7 +70,6 @@ def data_populate_posts():
             except Exception as e:
                 db.session.rollback()
                 print(f"An error occurred: {e}") 
-
 
 @data.cli.group("db")
 def data_group():
