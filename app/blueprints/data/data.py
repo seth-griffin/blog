@@ -15,14 +15,11 @@ def data_init_command():
     data_init()
     click.echo("Initialized the database")
 
-
 @data.cli.command("clean")
 def data_clean_command():
-    with app.app_context():
-        db.drop_all(bind='blog')
+    Post.__table__.drop(db.engine)
     print("Database dropped and data deleted")
     
-
 @data.cli.command("import-posts")
 def data_populate_data_command():
     """Populate database with pre-defined posts"""
@@ -63,7 +60,7 @@ def data_import_posts():
 
         if save == True:
             db.session.add(post)
-            print("Attemping to import post with id " + post.id + "and title " + post.title)
+            print("Attemping to import post with id " + post.id + " and title " + post.title)
             try:
                 db.session.commit()
                 print("Imported!")
