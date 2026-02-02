@@ -36,8 +36,13 @@ def create_app():
     """ Import app dependents """
     from .blueprints.blog import routes
     from .blueprints.data import data
-
+    from .blueprints.data.models import Post
+    
     app.register_blueprint(data.data)
     app.register_blueprint(routes.blog)
+
+    @app.template_global("article_link")
+    def article_link(post: Post):
+        return "#"
 
     return app
