@@ -6,65 +6,62 @@ from datetime import date
 
 blog = Blueprint("blog", __name__, template_folder="web/static/templates")
 
+
 @blog.route("/", methods=["GET"])
 @blog.route("/index")
 @blog.route("/<path:full_path>")
 def index(full_path="/"):
     if full_path == "/" or full_path == "":
-        top5_posts = (db
-            .session
-            .query(Post)
-            .order_by(Post.posted_on.desc())
-            .limit(5)
-            .all()
+        top5_posts = (
+            db.session.query(Post).order_by(Post.posted_on.desc()).limit(5).all()
         )
-        return render_template("index.html", mimetype='text/html', posts=top5_posts)
+        return render_template("index.html", mimetype="text/html", posts=top5_posts)
     else:
         if is_post_url(full_path):
             criteria = post_url_to_criteria(full_path)
-            post = post_get(criteria["categories"], criteria["posted_on"], criteria["title"])
-            
-            return render_template("post.html", mimetype='text/html', post=post)
+            post = post_get(
+                criteria["categories"], criteria["posted_on"], criteria["title"]
+            )
+
+            return render_template("post.html", mimetype="text/html", post=post)
+
 
 def post_get(categories, posted_on, title):
 
-    return (db
-        .session
-        .query(Post)
-        #.filter(Post.posted_on == posted_on)
+    return (
+        db.session.query(Post)
+        # .filter(Post.posted_on == posted_on)
         .filter(Post.categories == categories)
         .filter(Post.title.ilike(title))
         .one()
     )
 
+
 def post_url_to_criteria(full_path):
-    path_segments = full_path.split("/");
+    path_segments = full_path.split("/")
     title = path_segments.pop().replace("-", " ").replace(".html", "")
-    posted_on = path_segments.pop() + "-" + path_segments.pop() + "-" + path_segments.pop()
+    posted_on = (
+        path_segments.pop() + "-" + path_segments.pop() + "-" + path_segments.pop()
+    )
     categories = ",".join(path_segments)
 
-    return {
-        'title': title,
-        'posted_on': posted_on,
-        'categories': categories
-    }
+    return {"title": title, "posted_on": posted_on, "categories": categories}
 
 
 def is_post_url(full_path):
     is_post_url = True
-    
+
     post_criteria = post_url_to_criteria(full_path)
-    
+
     post = post_get(
-        post_criteria["categories"], 
-        post_criteria["posted_on"], 
-        post_criteria["title"]
+        post_criteria["categories"], post_criteria["posted_on"], post_criteria["title"]
     )
-    
+
     if post is None:
         is_post_url = False
-    
+
     return is_post_url
+
 
 @blog.route(
     "/post/<path:categories>/<int:year>/<int:month>/<int:day>/<string:title>",
