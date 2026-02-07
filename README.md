@@ -1,23 +1,39 @@
 Overview
 =====================
-A simple blogging application built with Python and Flask using MySQL as a backend
+A simple blogging application built with Python and Flask using MySQL/Maria as a backend
 
 Quick Start
 =====================
+touch .env and then edit adding:
+
+```
+touch .env
+vim .env
+PYTHONDONTWRITEBYTECODE=1
+DB_URN='mysql+mysqlconnector://{}:{}@{}/{}'
+DB_USER=dev
+DB_PASS=
+DB_IP=localhost
+DB_NAME=blog
+```
+
 ```
 source .venv/bin/activate
-flask db init
-flask run --port 5001
+flask data create-db
+flask data import-posts
+flask run --debug --port 5001
+```
+
+Before checking in code run black formatter:
+
+```
 black .
 ```
 
-Next:
-====================
+If making database changes drop and recreate the database tables:
+
 ```
--- Add content database (maria nosql, dml management tool, ddl, orm)
-    -- continue with sqlalchemy
-        -Create db model
-        -DB creation
-        -DB Migration
-        -Intial db load 
+flask data clean
+flask data create-db
+flask data import-posts
 ```

@@ -43,6 +43,11 @@ def create_app():
 
     @app.template_global("article_link")
     def article_link(post: Post):
-        return "#"
+        return (post.categories.replace(',', '/') 
+            + '/' 
+            + post.posted_on.strftime("%Y/%m/%d") 
+            + '/'
+            + post.title.lower().replace(" ", "-") + ".html"
+        )
 
     return app
