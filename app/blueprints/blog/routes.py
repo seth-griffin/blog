@@ -1,5 +1,4 @@
-from flask import render_template
-from flask import Blueprint
+from flask import render_template, Blueprint, make_response 
 from app.blueprints.data.models import Post
 from app.extensions import db
 from datetime import date
@@ -74,3 +73,23 @@ def post(categories, year, month, day, title):
 @blog.route("/about", methods=["GET"])
 def about():
     return render_template("about.html")
+
+@blog.route("/feed.xml", methods=["GET"])
+def feed():
+    top5_posts = (
+        db
+        .session
+        .query(Post)
+        .order_by(Post.posted_on.desc())
+        .limit(5)
+        .all()
+    )
+
+    updated = top5_posts[0].posted_on
+    posts = top5_posts
+    
+    rendered = render_template("rss.xml", updated=updated, posts=posts)
+    response = make_response(rendered)
+    response.headers['Content-Type'] = 'application/xml'
+    return response
+

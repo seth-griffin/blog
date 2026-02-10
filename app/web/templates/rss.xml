@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US">
+    <link href="/feed.xml" rel="self" type="application/atom+xml" />
+    <link href="/" rel="alternate" type="text/html" hreflang="en-US" />
+    <updated>{{ updated.strftime('%Y%m%dT%H%M%S.%fZ') }}</updated>
+    <id>/feed.xml</id>
+    <title type="html">Seth Griffin</title>
+    <subtitle>
+        Software Developer currently working wherever and living in Austin Texas.
+    </subtitle>
+    {% for post in posts %}
+    {% set post_url_prefix = '/' ~ post.categories | replace(',', '/') ~ '/' ~ post.posted_on.strftime('%m/%d/%Y') ~ '/' ~ post.title | replace(' ', '-') | lower %}
+    <entry>
+        <title type="html">{{ post.title }}</title>
+        <link href="{{ post_url_prefix }}.html" rel="alternate" type="text/html" title="{{ post.title }}" />
+        <published>{{ post.posted_on.strftime('%Y%m%dT%H%M%S.%fZ') }}</published>
+        <updated>{{ post.posted_on.strftime('%Y%m%dT%H%M%S.%fZ') }}</updated>
+        <id>
+            {{ post_url_prefix }}
+        </id>
+        <content type="html" xml:base="{{ post_url_prefix }}.html">
+            <![CDATA[
+            {{ post.content|safe }}
+            ]]>
+        </content>
+        <author>
+            <name />
+        </author>
+        {% for category in post.categories.split(",") %}
+        <category term="{{ category }}" />
+        {% endfor %}
+    </entry>
+    {% endfor %}
+</feed>
