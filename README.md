@@ -42,6 +42,11 @@ python3 -m pip install
 flask data clean # Optional when making data structure changes or content updates
 flask data create-db
 flask data import-posts
+```
+
+## Run the web app
+
+```
 flask run --debug --port 5001
 ```
 
