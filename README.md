@@ -4,17 +4,42 @@ A simple blogging application built with Python and Flask using MySQL/Maria as a
 
 Quick Start
 =====================
-touch .env and then edit adding:
 
 ```
 touch .env
 vim .env
+```
+
+Add the following settings to .env
+
+```
 PYTHONDONTWRITEBYTECODE=1
 DB_URN='mysql+mysqlconnector://{}:{}@{}/{}'
 DB_USER=dev
 DB_PASS=
 DB_IP=localhost
 DB_NAME=blog
+```
+
+Create a virtual environment
+
+```
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install dependencies
+
+```
+python3 -m pip install
+```
+
+Note:
+
+When finished deactivate your venv with:
+
+```
+deactivate
 ```
 
 ```
