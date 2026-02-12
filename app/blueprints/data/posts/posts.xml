@@ -11,7 +11,7 @@
     <post>
         <id>2</id>
         <categories>bash,sysadmin,devops,systemd,units,java,springboot</categories>
-        <title>Spring Boot System Installer</title>
+        <title>Spring Boot Systemd Installer</title>
         <posted_on>2023-02-13</posted_on>
         <content>spring-boot-systemd-installer.html</content>
         <url_path>null</url_path>

@@ -5,7 +5,6 @@ from datetime import date
 
 blog = Blueprint("blog", __name__, template_folder="web/static/templates")
 
-
 @blog.route("/", methods=["GET"])
 @blog.route("/index")
 @blog.route("/<path:full_path>")
@@ -14,7 +13,12 @@ def index(full_path="/"):
         top5_posts = (
             db.session.query(Post).order_by(Post.posted_on.desc()).limit(5).all()
         )
-        return render_template("index.html", mimetype="text/html", posts=top5_posts)
+        return render_template("index.html", 
+            mimetype="text/html", 
+            posts=top5_posts,
+            title="Seth Griffin | Home",
+            description="Home page"
+        )
     else:
         if is_post_url(full_path):
             criteria = post_url_to_criteria(full_path)
@@ -22,7 +26,16 @@ def index(full_path="/"):
                 criteria["categories"], criteria["posted_on"], criteria["title"]
             )
 
-            return render_template("post.html", mimetype="text/html", post=post)
+            posted_on_iso_8601 = post.posted_on.strftime('%Y%m%dT%H%M%S.%fZ')
+            posted_on_mm_dd_YYYY = post.posted_on.strftime('%b %d, %Y')
+
+            return render_template("post.html", 
+                title=post.title,
+                description=post.title,
+                post=post, 
+                posted_on_iso_8601=posted_on_iso_8601, 
+                posted_on_mm_dd_YYYY=posted_on_mm_dd_YYYY
+            )
 
 
 def post_get(categories, posted_on, title):
@@ -72,7 +85,11 @@ def post(categories, year, month, day, title):
 
 @blog.route("/about", methods=["GET"])
 def about():
-    return render_template("about.html")
+    return render_template(
+        "about.html",
+        title="Seth Griffin | About",
+        description="Seth Griffin | About"
+    )
 
 
 @blog.route("/feed.xml", methods=["GET"])
@@ -85,4 +102,5 @@ def feed():
     rendered = render_template("rss.xml", updated=updated, posts=posts)
     response = make_response(rendered)
     response.headers["Content-Type"] = "application/xml"
+    
     return response
