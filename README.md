@@ -44,6 +44,12 @@ flask data create-db
 flask data import-posts
 ```
 
+## Run the test suite and view the coverage report
+
+```
+pytest
+```
+
 ## Run the web app
 
 ```
