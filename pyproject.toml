@@ -1,0 +1,8 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["tests_*.py", "*_test.py"]
+python_functions = ["tests_*"]
+addopts = "--strict-markers --cov=app --cov-report=term-missing"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
