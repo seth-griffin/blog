@@ -1,7 +1,6 @@
-from app.blueprints.data.util import db_create_engine
 
-def test_is_using_in_memory_db(db_engine):
-    connection_url = str(db_engine.url)
+def test_sqlalchemy_database_uri_is_set(app):
+    connection_url = app.config["SQLALCHEMY_DATABASE_URI"] 
 
     assert "sqlite" in connection_url
     assert ":memory" in connection_url

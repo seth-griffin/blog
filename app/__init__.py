@@ -1,16 +1,12 @@
 from flask import Flask
 from .extensions import db
 from dotenv import load_dotenv
-import os, sys
-
+import os
 
 def create_app():
     """Create flask application"""
    
-    if "pytest" in sys.modules:
-        load_dotenv(dotenv_path='.env.test')
-    else:
-        load_dotenv(dotenv_path='.env.dev')
+    load_dotenv()
     
     app = Flask(
         __name__,
