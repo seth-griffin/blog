@@ -8,12 +8,30 @@ Quick Start
 ## Create .env config
 
 ```
-touch .env
-vim .env
+touch .env.dev
+vim .env.dev
 ```
 
-Add the following settings to .env
+Add the following settings to .env.dev
 
+```
+PYTHONDONTWRITEBYTECODE=1
+DB_URN='mysql+mysqlconnector://{}:{}@{}/{}'
+DB_USER=dev
+DB_PASS=
+DB_IP=localhost
+DB_NAME=blog
+```
+
+## Create pytest .env
+
+```
+touch .env.test
+vim .env.test
+```
+
+Add the following settings to .env.test
+TODO: Update to correct test parameters 
 ```
 PYTHONDONTWRITEBYTECODE=1
 DB_URN='mysql+mysqlconnector://{}:{}@{}/{}'
