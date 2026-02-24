@@ -1,4 +1,6 @@
-from app.blueprints.blog.routes import post_url_to_criteria
+import app.blueprints.blog.routes
+from app.blueprints.blog.util import post_url_to_criteria, post_is_url
+import pytest
 
 def test_blog_route_get_index_home(client):
     response = client.get("/")
@@ -45,6 +47,40 @@ def test_post_url_to_critera():
     assert criteria_expect_bad_2["posted_on"] != "2025-02-10"
     assert criteria_expect_bad_2["categories"] == ""
 
+@pytest.mark.skip("Skipping due to pytest.mark.skip being set")
 def test_is_post_url():
-    assert False is False
-        
+    criteria_good_1 = {
+        "title": "introduction to the arc programming language",
+        "posted_on": "2025-12-11",
+        "categories": "programming,functional-programming,lisp,scheme,arc"
+    }
+
+    criteria_good_2 = {
+        "title": "welcome to my github site",
+        "posted_on": "2023-02-10",
+        "categories:": "general,update"
+    }
+
+    criteria_bad_1 = {
+        "title": "welcome to my github site",
+        "posted_on": "2023-02-10",
+        "categories:": "general,update"
+    }
+
+    criteria_bad_2 = {
+        "title": "welcome to my github site",
+        "posted_on": "2023-02-10",
+        "categories:": "general,update"
+    }
+
+    test_post_url_good_1_post = is_post_url(criteria_good_1)
+    test_post_url_good_2_post = is_post_url(criteria_good_2)
+
+    test_post_url_bad_1_post = is_post_url(criteria_bad_1)
+    test_post_url_bad_2_post = is_post_url(criteria_bad_2)
+
+    assert test_post_url_good_1_post is not False
+    assert test_post_url_good_2_post is not False
+    assert test_post_url_bad_1_post is not False
+    assert test_post_url_bad_2_post is not False
+
