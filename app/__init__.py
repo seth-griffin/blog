@@ -1,12 +1,18 @@
 from flask import Flask
+import logging
 from .extensions import db
 from dotenv import load_dotenv
 import os
 
 def create_app():
     """Create flask application"""
-   
+  
     load_dotenv()
+    
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s | %(levelname)8s | %(name)s %(message)s'
+    )
     
     app = Flask(
         __name__,
@@ -14,6 +20,12 @@ def create_app():
         static_folder="web/static",
         template_folder="web/templates",
     )
+
+    app.logger.debug("Detailed debug info")
+    app.logger.info("Normal operation")
+    app.logger.warning("Something suspicious")
+    app.logger.error("Something broke")
+    app.logger.critical("Requires immediate fixing")
 
     uri = "mysql+pymysql://{}:{}@{}:3306/{}".format(
         os.getenv("DB_USER"),

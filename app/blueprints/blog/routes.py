@@ -1,7 +1,8 @@
-from flask import render_template, Blueprint, make_response
+from flask import render_template, Blueprint, make_response, current_app
 from app.blueprints.data.models import Post
 from app.extensions import db
 from datetime import date
+import json
 
 blog = Blueprint("blog", __name__, template_folder="web/static/templates")
 
@@ -9,7 +10,11 @@ blog = Blueprint("blog", __name__, template_folder="web/static/templates")
 @blog.route("/index")
 @blog.route("/<path:full_path>")
 def index(full_path="/"):
+    current_app.logger.debug("Detecting root or Post path")
+
     if full_path == "/" or full_path == "":
+        current_app.logger.debug("Root path detected, rendering index.html with top 5 posts")
+
         top5_posts = (
             db.session.query(Post).order_by(Post.posted_on.desc()).limit(5).all()
         )
@@ -20,8 +25,15 @@ def index(full_path="/"):
             description="Home page"
         )
     else:
-        if is_post_url(full_path):
-            criteria = post_url_to_criteria(full_path)
+        current_app.logger.debug("Non-root path detected checking to see if url maps to Post")
+        current_app.logger.debug(full_path)
+
+        criteria = post_url_to_criteria(full_path)
+        current_app.logger.debug("Post url to criteria output: " + json.dumps(criteria, default=str, indent=4))
+
+        if is_post_url(criteria):
+            current_app.logger.debug("Matching post found querying post from database and passing to post.html")
+
             post = post_get(
                 criteria["categories"], criteria["posted_on"], criteria["title"]
             )
@@ -37,9 +49,7 @@ def index(full_path="/"):
                 posted_on_mm_dd_YYYY=posted_on_mm_dd_YYYY
             )
 
-
 def post_get(categories, posted_on, title):
-
     return (
         db.session.query(Post)
         # .filter(Post.posted_on == posted_on)
@@ -48,22 +58,23 @@ def post_get(categories, posted_on, title):
         .one()
     )
 
-
 def post_url_to_criteria(full_path):
     path_segments = full_path.split("/")
     title = path_segments.pop().replace("-", " ").replace(".html", "")
+    posted_on_1 = path_segments.pop()
+    posted_on_2 = path_segments.pop()
+    posted_on_3 = path_segments.pop()
     posted_on = (
-        path_segments.pop() + "-" + path_segments.pop() + "-" + path_segments.pop()
+        posted_on_3 + "-" + posted_on_2 + "-" + posted_on_1
     )
+
     categories = ",".join(path_segments)
 
     return {"title": title, "posted_on": posted_on, "categories": categories}
 
 
-def is_post_url(full_path):
+def is_post_url(post_criteria):
     is_post_url = True
-
-    post_criteria = post_url_to_criteria(full_path)
 
     post = post_get(
         post_criteria["categories"], post_criteria["posted_on"], post_criteria["title"]
@@ -74,15 +85,6 @@ def is_post_url(full_path):
 
     return is_post_url
 
-
-@blog.route(
-    "/post/<path:categories>/<int:year>/<int:month>/<int:day>/<string:title>",
-    methods=["GET"],
-)
-def post(categories, year, month, day, title):
-    return render_template("post.html")
-
-
 @blog.route("/about", methods=["GET"])
 def about():
     return render_template(
@@ -90,7 +92,6 @@ def about():
         title="Seth Griffin | About",
         description="Seth Griffin | About"
     )
-
 
 @blog.route("/feed.xml", methods=["GET"])
 def feed():
