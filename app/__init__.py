@@ -4,16 +4,17 @@ from .extensions import db
 from dotenv import load_dotenv
 import os
 
+
 def create_app():
     """Create flask application"""
-  
+
     load_dotenv()
-    
+
     logging.basicConfig(
         level=logging.DEBUG,
-        format='%(asctime)s | %(levelname)8s | %(name)s %(message)s'
+        format="%(asctime)s | %(levelname)8s | %(name)s %(message)s",
     )
-    
+
     app = Flask(
         __name__,
         static_url_path="/web/",

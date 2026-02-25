@@ -2,6 +2,7 @@ from app.blueprints.data.models import Post
 from app.extensions import db
 from datetime import date
 
+
 def post_get(categories, posted_on, title):
     return (
         db.session.query(Post)
@@ -11,19 +12,19 @@ def post_get(categories, posted_on, title):
         .one()
     )
 
+
 def post_url_to_criteria(full_path):
     path_segments = full_path.split("/")
     title = path_segments.pop().replace("-", " ").replace(".html", "")
     posted_on_1 = path_segments.pop()
     posted_on_2 = path_segments.pop()
     posted_on_3 = path_segments.pop()
-    posted_on = (
-        posted_on_3 + "-" + posted_on_2 + "-" + posted_on_1
-    )
+    posted_on = posted_on_3 + "-" + posted_on_2 + "-" + posted_on_1
 
     categories = ",".join(path_segments)
 
     return {"title": title, "posted_on": posted_on, "categories": categories}
+
 
 def post_is_url(post_criteria):
     post_is_url = True
