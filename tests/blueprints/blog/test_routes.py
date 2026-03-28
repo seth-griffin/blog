@@ -5,6 +5,7 @@ import pytest
 
 
 def test_blog_route_get_index_home(client):
+    print("test_blog_route_get_index_home")
     response = client.get("/")
     assert response.status_code == 200
     assert b"Posts" in response.data
@@ -29,7 +30,7 @@ def test_blog_route_get_rss(client):
 def test_blog_route_test_rss_output_structure(client):
     response = client.get("/feed.xml")
     assert response.status_code == 200
-    assert "application/atom+xml" in response.headers["Content-Type"]
+    assert "application/xml" in response.headers["Content-Type"]
 
     namespaces = {"atom": "http://www.w3.org/2005/Atom"}
     root = ElementTree.fromstring(response.data)

@@ -6,6 +6,7 @@ from .util import db_create_engine
 from lxml import etree
 from .models import Post
 from ...extensions import db
+import datetime
 
 data = Blueprint("data", __name__)
 
@@ -34,6 +35,7 @@ def data_import_posts():
     """Read post flat-files and import into data model"""
     parser = etree.XMLParser(recover=True)
 
+    date_time_format = '%Y-%m-%d'
     posts_base_path = os.getcwd() + "/app/blueprints/data/posts/"
     posts_xml_file_name = "posts.xml"
     posts_xml_data_file_path = posts_base_path + posts_xml_file_name
@@ -53,7 +55,7 @@ def data_import_posts():
         elif element.tag == "title":
             post.title = element.text
         elif element.tag == "posted_on":
-            post.posted_on = element.text
+            post.posted_on = datetime.datetime.strptime(element.text, date_time_format)
         elif element.tag == "content":
             with open(posts_base_path + element.text, "r") as file:
                 post.content = file.read()
@@ -75,13 +77,6 @@ def data_import_posts():
             except Exception as e:
                 db.session.rollback()
                 print(f"An error occurred: {e}")
-
-
-@data.cli.group("db")
-def data_group():
-    """Database management commands."""
-    pass
-
 
 def data_init():
     """Initialize Database"""

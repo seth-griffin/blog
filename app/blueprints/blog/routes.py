@@ -80,6 +80,6 @@ def feed():
 
     rendered = render_template("rss.xml", updated=updated, posts=posts)
     response = make_response(rendered)
-    response.headers["Content-Type"] = "application/atom+xml"
+    response.headers["Content-Type"] = "application/xml"
 
     return response

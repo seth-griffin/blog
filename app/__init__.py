@@ -4,11 +4,10 @@ from .extensions import db
 from dotenv import load_dotenv
 import os
 
-
-def create_app():
+def create_app(dotenv_file='.env'):
     """Create flask application"""
 
-    load_dotenv()
+    load_dotenv(dotenv_file)
 
     logging.basicConfig(
         level=logging.DEBUG,
@@ -28,12 +27,15 @@ def create_app():
     app.logger.error("Something broke")
     app.logger.critical("Requires immediate fixing")
 
-    uri = "mysql+pymysql://{}:{}@{}:3306/{}".format(
-        os.getenv("DB_USER"),
-        os.getenv("DB_PASS"),
-        os.getenv("DB_IP"),
-        os.getenv("DB_NAME"),
-    )
+    if "mysql" in os.getenv("DB_URN"): 
+        uri = "mysql+pymysql://{}:{}@{}:3306/{}".format(
+            os.getenv("DB_USER"),
+            os.getenv("DB_PASS"),
+            os.getenv("DB_IP"),
+            os.getenv("DB_NAME"),
+        )
+    else:
+        uri = os.getenv("DB_URN")
 
     app.config["SQLALCHEMY_DATABASE_URI"] = uri
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
@@ -43,7 +45,6 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
-
     """ Load settings """
     app.config.from_object("config.Config")
 
