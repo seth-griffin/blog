@@ -1,5 +1,4 @@
-import app.blueprints.blog.routes
-from app.blueprints.blog.util import post_url_to_criteria, post_is_url
+from app.blueprints.blog.util import post_url_to_criteria
 from xml.etree import ElementTree
 import pytest
 

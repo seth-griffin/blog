@@ -4,7 +4,8 @@ from .extensions import db
 from dotenv import load_dotenv
 import os
 
-def create_app(dotenv_file='.env'):
+
+def create_app(dotenv_file=".env"):
     """Create flask application"""
 
     load_dotenv(dotenv_file)
@@ -27,7 +28,7 @@ def create_app(dotenv_file='.env'):
     app.logger.error("Something broke")
     app.logger.critical("Requires immediate fixing")
 
-    if "mysql" in os.getenv("DB_URN"): 
+    if "mysql" in os.getenv("DB_URN"):
         uri = "mysql+pymysql://{}:{}@{}:3306/{}".format(
             os.getenv("DB_USER"),
             os.getenv("DB_PASS"),

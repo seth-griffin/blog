@@ -7,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.blueprints.data.models import Base
 from app.blueprints.data.data import data_import_posts
 
+
 @pytest.fixture
 def app():
     app = create_app(".env_test")
@@ -19,7 +20,7 @@ def app():
         assert result[0][0] == 1
         try:
             Base.metadata.create_all(db.engine)
-            data_import_posts()
+            data_import_posts(db)
         except SQLAlchemyError as e:
             print("An error occurred:", e)
             exit()

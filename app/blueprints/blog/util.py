@@ -1,6 +1,5 @@
 from app.blueprints.data.models import Post
 from app.extensions import db
-from datetime import date
 
 
 def post_get(categories, posted_on, title):
