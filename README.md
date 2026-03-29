@@ -59,8 +59,8 @@ flask run --debug --port 5001
 ## Run black prior to committing to tidy your code:
 
 ```
-importchecker /app
-importchecker /tests
+importchecker app
+importchecker tests
 black .
 ```
 
