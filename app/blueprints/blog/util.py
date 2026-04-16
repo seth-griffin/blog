@@ -3,14 +3,14 @@ from app.extensions import db
 
 
 def post_get(categories, posted_on, title):
-    return (
-        db.session.query(Post)
+    try:
+        return (db.session.query(Post)
         # .filter(Post.posted_on == posted_on)
         .filter(Post.categories == categories)
         .filter(Post.title.ilike(title))
-        .one()
-    )
-
+        .one())
+    except:
+        raise Exception("404") 
 
 def post_url_to_criteria(full_path):
     path_segments = full_path.split("/")

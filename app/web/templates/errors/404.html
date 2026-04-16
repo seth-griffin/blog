@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block title %}Seth Griffin | 404 {% endblock %}
+{% block content %}
+  <div class="wrapper">
+    <div class="home">
+        <h1>Page Not Found (404)</h1>
+        <p>Sorry, the page you're looking for doesn't exist.</p>
+        <p><a href="{{ url_for('blog.index') }}">Go back to homepage</a></p>
+    </div>
+  </div>
+{% endblock %}
